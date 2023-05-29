@@ -1,0 +1,83 @@
+ESTRUCTURA DEL PROYECTO
+ * Capa modelo              = Clases de tipo entidad
+ * Capa Persitencia         = Modelo base de datos           EntityFramework core
+ * Capa de Aplicacion       = Reglas de negocio              
+ * Capa de controller -API  = endpoints
+
+CREAR EL PROYECTO.
+1 - Abrir visual studio
+2 - crear nuevo projecto.
+3 - Seleccionar Blank solution (TiendaServicios)
+4 - Crear el proyecto
+5 - Click derecho sobre la solucion -> add -> new project
+6 - Crear nuevo projecto -> Seleccionar Asp.Net Core Web Api -> (TiendaServicios.Api.Autor)
+7 - Click derecho sobre sobre la API -> add -> new foder (Repetir el paso para para las capas modelo, persistencia y aplicacion)
+8 - En la capa modelo agregamos las tablas de la base de datos
+    Click derecho -> add -> class (Una por cada tabla)
+    Agregamos las propiedades que componen la clase
+    Agregamos la relaccion que hay entre los modelos (ICollection).
+    Nota: Crear un valor unico para hacerle seguimiento desde otro microservicio Guid.
+9 - Instalar gestor de base de datos (postgreSql) cliente pgAdmin
+    Abrir el cliente pgAdmin y crear una base de datos (tiendaLibroAutor)
+    Utilizaremos migrations o codefirst para crear las tablas en la bd
+    Con el NuGet Package Manager instalamos EntityFrameworkCore(7.0.0), EntityFrameworkCore.tools, EntityFrameworCore.Desing, Npgsql.EntityFrameworkCore.PostgreSQL
+10 -Crear Context de EntityFramework en la capa de persistencia
+    Click derecho -> add -> class (ContextoAutor)Este heredara del DbContext
+    Agregar contructor
+    Agregar DbSets correspondientes a los modelos
+    Agregar el DbContext en el archivo program.cs y configurar la cadena de conexion.
+    Ejecutar el siguiente comando en la consola para habilitar las migraciones (dotnet tool install --global dotnet-ef --version 3.1.2)
+    Ejecutar el siguiente comando en la terminal de visual Studio (dotnet ef migrations add migracionPostgresInicial --project TiendaServicio.Api.Autor) para crear el archivo
+    Ejecutar el siguiente comando (dotnet ef database update --project TiendaServicio.Api.Autor) para actualizar la base de datos con sus respectivas tabla
+
+IMPLEMENTACION PATRON CQRS -> dividir responsabilidades
+1 - instalar MediatR.Extension.Microsoft.DependencyInjection mediante el package NuGet
+2 - implementar interfaces para conectar los controllers
+3 - Agregar una clase (Nuevo) dentro de la capa Aplicacion
+    Creamos 2 clases dentro de esta clase (Nuevo) con los nombres (Ejecuta , Manejador)
+    heredamos de IRequest y IRequestHandler (Ejecuta:IRequest, Manejador:IrequestHandler) pertenecientes a la libreria mediatR
+    Desarrollar las clases deacuerdo al ejemplo en el codigo
+4 - Configurar controllers
+    Agregar la libreria mediatR en el program.cs (builder.Services.AddMediatR(typeof(Nuevo.Manejador).Assembly);)
+    Crear nuevo controlador
+    Click derecho sobre controller -> add -> controller (AutorController)
+    implementamos la logica dentro del controller (metodos https)
+5 - Repetimos los pasos 4 y 5 para implementar las diferentes peticiosnes (get, getById, etc)
+
+VALIDACIONES CON FLUENT CQRS
+1 - instalar flluentvalidation.AspNetCore
+2 - Inicializar fluent validation dentro del program.cs (builder.Services.AddControllers().AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<Nuevo>());)
+3 - Referenciar la validacion en la clase (Nuevo) referente al metodo post
+ 
+DTO EN CQRS
+1 - instalar Automapper.Extension.Microsoft.DependencyInjection
+2 - creamos la clase DTO con las propiedades que queremos que se muestren en la capa de aplicacion (AutorDto)
+3 - vamos a la clase consulta para implementar el DTO
+4 - Injectar el IMapper en el contructor de la clase Manejador dentro de la clase consulta
+5 - Hacemos la conversion del modelo al dto (_mapper.Map<List<AutorLibro>, List<AutorDto>>(autores);)
+6 - cambiamos los tipos de respuestas ejemplo <AutorLibro> por <AutorDto>
+7 - Modificar el controller con la respuesta AutorDto
+8- Inicializar el automapper en el program.cs (builder.Services.AddAutoMapper(typeof(Consulta.Manejador));)
+9 - creamos una clase llamada mappingProfile que hereda del profile de automapper en la capa de aplicacion.
+10- creamos el constructor y hacemos el mapeo (CreateMap<AutorLibro, AutorDto>();)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

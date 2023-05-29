@@ -1,0 +1,32 @@
+{
+  "profiles": {
+    "TiendaServicio.Api.Autor": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "api/autor",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConexionDatabase": "Server=host.docker.internal;Port=49153;Database=tiendaLibroAutor;user Id=postgres;Password=postgrespw"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "http://localhost:5203"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "api/autor",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:49237",
+      "sslPort": 0
+    }
+  }
+}
